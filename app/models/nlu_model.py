@@ -12,7 +12,7 @@ except ImportError:
     sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
     from app.config import MODEL_PATH
 
-INTENT_CONFIDENCE_THRESHOLD = 0.30
+INTENT_CONFIDENCE_THRESHOLD = 0.70
 
 class NLUModel:
     def __init__(self):
@@ -33,9 +33,13 @@ class NLUModel:
 
     @staticmethod
     def apply_confidence_fallback(intent, confidence):
-        if "restaurant" in intent:
-            if confidence < INTENT_CONFIDENCE_THRESHOLD:
+        if confidence < INTENT_CONFIDENCE_THRESHOLD:
+            if "restaurant" in intent:
                 return "restaurant"
+            if "park" in intent:
+                return "park"       
+            if "store" in intent:
+                return "store"
         return intent
 
     def load_model(self):
@@ -101,7 +105,7 @@ if __name__ == "__main__":
     print(model.predict("I want mexican food near me"))
     print(model.predict("Show me nearby italian restaurants that are open now"))
     print(model.predict("Find me the closest sushi place"))
-    print(model.predict("Looking for a vegan restaurant in my neighborhood"))
+    print(model.predict("Looking a vegan-friendly place to eat in my neighborhood"))
     print(model.predict("What's the best thai restaurant in this area?"))
     
     # Test cases for different business types
@@ -126,6 +130,7 @@ if __name__ == "__main__":
     print(model.predict("Find me the closest dentist"))
     print(model.predict("Looking for a hair salon that's open now"))
     print(model.predict("Where can I find a car repair shop?"))
+    print(model.predict("I need a mechanic near me"))
     print(model.predict("What's the best gym in this area?"))
     
     # Test cases with time and location hints
