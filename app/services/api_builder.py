@@ -1,6 +1,6 @@
 from typing import Dict, Optional
-from .google_maps import GoogleMapsService
 from ..models.nlu_model import NLUModel
+from .google_maps import GoogleMapsService
 
 class APIBuilder:
     def __init__(self):
@@ -52,3 +52,9 @@ class APIBuilder:
                 )
         
         return response 
+    
+
+if __name__ == "__main__":
+    api_builder = APIBuilder()
+    print(api_builder.build_api_call("I want to find a restaurant near me"))
+    
