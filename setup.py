@@ -9,7 +9,7 @@ setup(
         "uvicorn",
         "python-dotenv",
         "googlemaps",
-        "tensorflow",
+        "tensorflow==2.12.0",
         "numpy",
     ],
 ) 
