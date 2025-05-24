@@ -41,22 +41,25 @@ env/
 .DS_Store
 
 # Project specific
-models/nlu_model/*
-models/*
-*.h5
-*.pb
-*.ckpt
-*.pt
-*.pth
-*.onnx
-*.bin
-*.model
-*.joblib
-*.pkl
-*.pickle
-*.sav
-*.npy
-*.npz
+# Root models directory
+models/
+models/**/*.h5
+models/**/*.pb
+models/**/*.ckpt
+models/**/*.pt
+models/**/*.pth
+models/**/*.onnx
+models/**/*.bin
+models/**/*.model
+models/**/*.joblib
+models/**/*.pkl
+models/**/*.pickle
+models/**/*.sav
+models/**/*.npy
+models/**/*.npz
+models/**/__pycache__/
+models/**/.ipynb_checkpoints/
+
 data/*.csv
 data/*.json
 notebooks/.ipynb_checkpoints/

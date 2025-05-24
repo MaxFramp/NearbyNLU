@@ -4,6 +4,8 @@ import os
 import numpy as np
 from typing import Dict
 import pickle
+from sentence_transformers import SentenceTransformer
+
 try:
     from app.config import MODEL_PATH
 except ImportError:
@@ -17,13 +19,13 @@ INTENT_CONFIDENCE_THRESHOLD = 0.70
 class NLUModel:
     def __init__(self):
         self.model = None
-        self.tokenizer_config = None
+        self.encoder = None
+        self.label_encoder = None
         self.load_model()
-        # self.load_tokenizer_config()
 
     @staticmethod
     def extract_entities(text: str) -> Dict[str, str]:
-    # Simple example using regex. You can customize this logic.
+        # Simple example using regex. You can customize this logic.
         entities = {}
         if "near" in text or "nearby" in text:
             entities["location_hint"] = "nearby"
@@ -43,27 +45,22 @@ class NLUModel:
         return intent
 
     def load_model(self):
-        """Load the TensorFlow model from the models directory."""
+        """Load the TensorFlow model and sentence transformer encoder."""
         try:
+            # Load the transformer encoder
+            self.encoder = SentenceTransformer('all-MiniLM-L6-v2')
+            
+            # Load the classifier model
             self.model = tf.keras.models.load_model(MODEL_PATH)
             print("Model loaded successfully")
-            print(self.model)
-            print(self.model.signatures)
-            with open("models/label_encoder.pkl", "rb") as f:
+            
+            # Load the label encoder
+            with open("models/transformer_label_encoder.pkl", "rb") as f:
                 self.label_encoder = pickle.load(f)
+                
         except Exception as e:
             print(f"Error loading model: {e}")
             raise
-
-    # def load_tokenizer_config(self):
-    #     """Load tokenizer configuration."""
-    #     try:
-    #         with open(TOKENIZER_CONFIG_PATH, 'r') as f:
-    #             self.tokenizer_config = json.load(f)
-    #     except Exception as e:
-    #         print(f"Error loading tokenizer config: {e}")
-    #         raise
-
 
     def predict(self, text: str):
         """
@@ -75,11 +72,14 @@ class NLUModel:
         Returns:
             dict: Prediction results including intent and entities
         """
-        if not self.model:
-            raise ValueError("Model not loaded")
+        if not self.model or not self.encoder:
+            raise ValueError("Model or encoder not loaded")
+        
+        # Encode the input text using the transformer
+        text_embedding = self.encoder.encode([text])
         
         # Predict intent
-        pred_probs = self.model.predict([text])
+        pred_probs = self.model.predict(text_embedding)
         intent_index = np.argmax(pred_probs[0])
         confidence = float(pred_probs[0][intent_index])
         intent = self.label_encoder.inverse_transform([intent_index])[0]
@@ -88,14 +88,11 @@ class NLUModel:
         # Extract entities
         entities = self.extract_entities(text)
             
-        # TODO: Implement actual prediction logic
-        # This is a placeholder that will be implemented based on the specific model
         return {
             "intent": intent,
             "entities": entities,
             "confidence": confidence
-        } 
-    
+        }
 
 if __name__ == "__main__":
     model = NLUModel()
@@ -148,3 +145,13 @@ if __name__ == "__main__":
     print(model.predict("Looking for a subway station nearby"))
     print(model.predict("What's the best airport in this area?"))
     print(model.predict("Find me the nearest taxi stand"))
+
+    # Test cases for client profile
+    print("\n=== Client Profile Queries ===")
+    print(model.predict("Loves vegan food."))
+    print(model.predict("Client is a family with young children."))
+    print(model.predict("Has a thing for antiques and old bookstores"))
+    print(model.predict("Client is a fitness enthusiast."))
+    print(model.predict("Client is a movie buff."))
+    print(model.predict("Client owns a dog."))
+    
