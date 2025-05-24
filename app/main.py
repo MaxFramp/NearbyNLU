@@ -67,6 +67,7 @@ async def process_query(request: QueryRequest):
             
         # Process the query using our API builder
         response = api_builder.build_api_call(full_query)
+
         
         return response
         

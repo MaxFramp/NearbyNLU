@@ -41,9 +41,22 @@ env/
 .DS_Store
 
 # Project specific
-models/*.h5
-models/*.pb
-models/*.ckpt
+models/nlu_model/*
+models/*
+*.h5
+*.pb
+*.ckpt
+*.pt
+*.pth
+*.onnx
+*.bin
+*.model
+*.joblib
+*.pkl
+*.pickle
+*.sav
+*.npy
+*.npz
 data/*.csv
 data/*.json
 notebooks/.ipynb_checkpoints/

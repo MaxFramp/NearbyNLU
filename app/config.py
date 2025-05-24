@@ -8,7 +8,7 @@ load_dotenv()
 GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 
 # Model Configuration
-MODEL_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "models", "nlu_model")
+MODEL_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "models", "transformer_nlu_model")
 TOKENIZER_CONFIG_PATH = os.path.join(os.path.dirname(__file__), "models", "tokenizer_config.json")
 
 # API Configuration
